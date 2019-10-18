@@ -146,23 +146,23 @@ func TestKeys(t *testing.T) {
 	if err != nil {
 		t.Error("unable to create a filter")
 	}
-	if f.HasKey("a") {
+	if f.HasKey([]byte("a")) {
 		t.Error("filter shouldn't contain key a")
 	}
-	if f.AddKey("a"); !f.HasKey("a") {
+	if f.AddKey([]byte("a")); !f.HasKey([]byte("a")) {
 		t.Error("filter should contain key a")
 	}
-	if f.HasKey("b") {
+	if f.HasKey([]byte("b")) {
 		t.Error("filter should contain key b")
 	}
-	if f.RemoveKey("a"); f.HasKey("a") {
+	if f.RemoveKey([]byte("a")); f.HasKey([]byte("a")) {
 		t.Error("filter shouldn't contain key a after removal")
 	}
 	// Add key twice, verify it still exists after one removal.
-	f.AddKey("a")
-	f.AddKey("a")
-	f.RemoveKey("a")
-	if !f.HasKey("a") {
+	f.AddKey([]byte("a"))
+	f.AddKey([]byte("a"))
+	f.RemoveKey([]byte("a"))
+	if !f.HasKey([]byte("a")) {
 		t.Error("filter should still contain key a")
 	}
 }
@@ -175,14 +175,14 @@ func TestFalsePositives(t *testing.T) {
 	}
 	lastFP := float64(0)
 	for i := 0; i < 1000; i++ {
-		f.AddKey(fmt.Sprintf("key-%d", i))
+		f.AddKey([]byte(fmt.Sprintf("key-%d", i)))
 		if f.probFalsePositive() < lastFP {
 			t.Error("P(FP) should increase")
 		}
 		lastFP = f.probFalsePositive()
 	}
 	for i := 0; i < 1000; i++ {
-		if !f.HasKey(fmt.Sprintf("key-%d", i)) {
+		if !f.HasKey([]byte(fmt.Sprintf("key-%d", i))) {
 			t.Error("could not find key-", i)
 		}
 	}
@@ -191,7 +191,7 @@ func TestFalsePositives(t *testing.T) {
 	probFP := f.probFalsePositive()
 	countFP := 0
 	for i := 0; i < 1000; i++ {
-		if f.HasKey(fmt.Sprintf("nonkey-%d", i)) {
+		if f.HasKey([]byte(fmt.Sprintf("nonkey-%d", i))) {
 			countFP++
 		}
 	}
@@ -210,7 +210,7 @@ func TestApproximateInsertions(t *testing.T) {
 		t.Error("unable to create a filter")
 	}
 	for i := 0; i <= 200; i++ {
-		f.AddKey(fmt.Sprintf("key-%d", i))
+		f.AddKey([]byte(fmt.Sprintf("key-%d", i)))
 		diff := i + 1 - int(f.approximateInsertions())
 		if i > 150 && diff == 0 {
 			t.Error("expected some approximation error at 150 insertions")

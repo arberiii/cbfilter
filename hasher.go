@@ -20,7 +20,6 @@ package cbfilter
 import (
 	"fmt"
 	"hash"
-	"io"
 
 	"github.com/spaolacci/murmur3"
 )
@@ -45,10 +44,10 @@ func newHasher() *hasher {
 }
 
 // HashKey writes the given key string to the hasher.
-func (h *hasher) hashKey(key string) {
+func (h *hasher) hashKey(key []byte) {
 	h.mmh3.Reset() // clear current hash state
-	if _, err := io.WriteString(h.mmh3, key); err != nil {
-		panic(fmt.Sprintf("unable to write string to hasher: %s", key))
+	if _, err := h.mmh3.Write(key); err != nil {
+		panic(fmt.Sprintf("unable to write string to hasher: %v", key))
 	}
 	h.hashed = true
 	sum := h.mmh3.Sum64()

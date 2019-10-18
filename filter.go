@@ -70,7 +70,7 @@ func NewFilter(N uint32, B uint32, maxFP float64) (*Filter, error) {
 }
 
 // AddKey adds the key to the Filter.
-func (f *Filter) AddKey(key string) {
+func (f *Filter) AddKey(key []byte) {
 	f.hasher.hashKey(key)
 	for i := uint32(0); i < f.K; i++ {
 		slot := f.hasher.getHash(i) % f.M
@@ -81,7 +81,7 @@ func (f *Filter) AddKey(key string) {
 
 // HasKey checks whether key has been added to the Filter. The chance this
 // method returns an incorrect value is given by ProbFalsePositive().
-func (f *Filter) HasKey(key string) bool {
+func (f *Filter) HasKey(key []byte) bool {
 	f.hasher.hashKey(key)
 	for i := uint32(0); i < f.K; i++ {
 		slot := f.hasher.getHash(i) % f.M
@@ -95,7 +95,7 @@ func (f *Filter) HasKey(key string) bool {
 // RemoveKey removes a key by first verifying it's likely been seen and then
 // decrementing each of the slots it hashes to. Returns true if the key was
 // "removed"; false otherwise.
-func (f *Filter) RemoveKey(key string) bool {
+func (f *Filter) RemoveKey(key []byte) bool {
 	if f.HasKey(key) {
 		f.hasher.hashKey(key)
 		for i := uint32(0); i < f.K; i++ {

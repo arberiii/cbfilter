@@ -29,7 +29,7 @@ func TestHashing(t *testing.T) {
 
 	seen := map[uint32]bool{} // set of all hash values seen
 	for _, key := range keys {
-		h.hashKey(key)
+		h.hashKey([]byte(key))
 		for i := uint32(0); i < uint32(10); i++ {
 			val := h.getHash(i)
 			if _, ok := seen[val]; ok {
